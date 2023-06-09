@@ -5,6 +5,10 @@ import scipy.signal as signal
 
 st.title("애플리케이션 제목")
 
+import pandas as pd
+df = pd.read_csv('data.csv')
+st.dataframe(df)
+
 num = [100]
 den = [1, 5, 106]
 
