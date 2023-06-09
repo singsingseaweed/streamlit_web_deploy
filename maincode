@@ -1,62 +1,55 @@
 import streamlit as st
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal as signal
 
-st.title("애플리케이션 제목")
+st.set_page_config(
+    page_title="제어공학기말",
+    layout="wide",
+)
 
-import pandas as pd
-df = pd.read_csv('data.csv')
-st.dataframe(df)
+st.header("제어공학기말 202021025 임수창")
+st.subheader("2번문제 streamlit 으로 공유")
+
 
 num = [100]
 den = [1, 5, 106]
 
 ltf = signal.TransferFunction(num, den)
 
-# Compute poles and zeros
 zeros, poles, _ = signal.tf2zpk(num, den)
-
-print("Zeros:", zeros)
-print("Poles:", poles)
 
 t = np.linspace(0, 5, 1000)
 u = np.ones_like(t)
 
 t, y, _ = signal.lsim(ltf, u, t)
 
-plt.figure()
-plt.plot(t, y)
-plt.xlabel('Time')
-plt.ylabel('Output')
-plt.title('Step Response')
-plt.grid(True)
+fig1, ax1 = plt.subplots()
+ax1.plot(t, y)
+ax1.set(xlabel='Time', ylabel='Output', title='Step Response')
+ax1.grid(True)
+st.pyplot(fig1)
 
 w, mag, phase = signal.bode(ltf)
 
-plt.figure()
-plt.subplot(2, 1, 1)
-plt.semilogx(w, mag)
-plt.xlabel('Frequency [rad/s]')
-plt.ylabel('Magnitude [dB]')
-plt.title('Bode Plot - Magnitude')
-plt.grid(True)
+fig2, (ax2, ax3) = plt.subplots(2, 1)
+ax2.semilogx(w, mag)
+ax2.set(xlabel='Frequency [rad/s]', ylabel='Magnitude [dB]', title='Bode Plot - Magnitude')
+ax2.grid(True)
 
-plt.subplot(2, 1, 2)
-plt.semilogx(w, phase)
-plt.xlabel('Frequency [rad/s]')
-plt.ylabel('Phase [degrees]')
-plt.title('Bode Plot - Phase')
-plt.grid(True)
+ax3.semilogx(w, phase)
+ax3.set(xlabel='Frequency [rad/s]', ylabel='Phase [degrees]', title='Bode Plot - Phase')
+ax3.grid(True)
 
-plt.figure()
-plt.plot(np.real(zeros), np.imag(zeros), 'o', label='Zeros')
-plt.plot(np.real(poles), np.imag(poles), 'x', label='Poles')
-plt.xlabel('Real')
-plt.ylabel('Imaginary')
-plt.title('Pole-Zero Plot')
-plt.grid(True)
-plt.legend()
+fig2.tight_layout()
+st.pyplot(fig2)
 
-plt.tight_layout()
-plt.show()
+fig3, ax4 = plt.subplots()
+ax4.plot(np.real(zeros), np.imag(zeros), 'o', label='Zeros')
+ax4.plot(np.real(poles), np.imag(poles), 'x', label='Poles')
+ax4.set(xlabel='Real', ylabel='Imaginary', title='Pole-Zero Plot')
+ax4.grid(True)
+ax4.legend()
+
+st.pyplot(fig3)
