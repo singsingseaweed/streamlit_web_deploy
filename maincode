@@ -1,0 +1,58 @@
+import streamlit as st
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.signal as signal
+
+st.title("애플리케이션 제목")
+
+num = [100]
+den = [1, 5, 106]
+
+ltf = signal.TransferFunction(num, den)
+
+# Compute poles and zeros
+zeros, poles, _ = signal.tf2zpk(num, den)
+
+print("Zeros:", zeros)
+print("Poles:", poles)
+
+t = np.linspace(0, 5, 1000)
+u = np.ones_like(t)
+
+t, y, _ = signal.lsim(ltf, u, t)
+
+plt.figure()
+plt.plot(t, y)
+plt.xlabel('Time')
+plt.ylabel('Output')
+plt.title('Step Response')
+plt.grid(True)
+
+w, mag, phase = signal.bode(ltf)
+
+plt.figure()
+plt.subplot(2, 1, 1)
+plt.semilogx(w, mag)
+plt.xlabel('Frequency [rad/s]')
+plt.ylabel('Magnitude [dB]')
+plt.title('Bode Plot - Magnitude')
+plt.grid(True)
+
+plt.subplot(2, 1, 2)
+plt.semilogx(w, phase)
+plt.xlabel('Frequency [rad/s]')
+plt.ylabel('Phase [degrees]')
+plt.title('Bode Plot - Phase')
+plt.grid(True)
+
+plt.figure()
+plt.plot(np.real(zeros), np.imag(zeros), 'o', label='Zeros')
+plt.plot(np.real(poles), np.imag(poles), 'x', label='Poles')
+plt.xlabel('Real')
+plt.ylabel('Imaginary')
+plt.title('Pole-Zero Plot')
+plt.grid(True)
+plt.legend()
+
+plt.tight_layout()
+plt.show()
